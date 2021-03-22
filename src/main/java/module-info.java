@@ -4,5 +4,4 @@ module raycasting.main {
 
     opens app;
     opens app.Raycasting;
-    opens app.Raycasting.Utils;
 }
