@@ -3,25 +3,23 @@ package app;
 import app.Raycasting.Boundary;
 import app.Raycasting.Particle;
 import app.Raycasting.Ray;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class Application extends javafx.application.Application {
-    public static final int HEIGHT = 720;
-    public static final int WIDTH = 1280;
+    public static final int WIDTH = 800;
+    public static final int HEIGHT = 600;
 
     public static void main(String[] args)
     {
@@ -31,46 +29,50 @@ public class Application extends javafx.application.Application {
     @Override
     public void start(Stage primaryStage) throws Exception
     {
+        Pane pane = new Pane();
+        pane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+
         Particle particle = new Particle();
+        ArrayList<Ray> rays = particle.getRays();
+
         ArrayList<Boundary> walls = new ArrayList<>();
-        walls.add(new Boundary(1, 1, 1, Application.HEIGHT - 50));
-        walls.add(new Boundary(1, 1, Application.WIDTH, 1));
-        walls.add(new Boundary(Application.WIDTH - 100, 1, Application.WIDTH - 100, Application.HEIGHT - 50));
-        walls.add(new Boundary(1, Application.HEIGHT - 50, Application.WIDTH - 100, Application.HEIGHT - 50));
-        //walls.add(new Boundary(400, 100, 400, 400));
-        //walls.add(new Boundary(600, 400, 700, 650));
+
+        walls.add(new Boundary(0, 0, 700, 0));
+        walls.add(new Boundary(700, 0, 700, 550));
+        walls.add(new Boundary(700, 550, 0, 550));
+        walls.add(new Boundary(0, 550, 0, 0));
 
         for(int i = 0; i < 5; i++)
         {
-            walls.add(new Boundary(Math.random() * 1200, Math.random() * 700, Math.random() * 1200, Math.random() * 700));
+            walls.add(new Boundary(Math.random() * 700, Math.random() * 550, Math.random() * 700, Math.random() * 550));
         }
 
-        Pane rootPane = new Pane();
-        rootPane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-        rootPane.getChildren().addAll(walls.stream().map(Boundary::getLine).collect(Collectors.toList()));
-
-        for(Ray ray: particle.getRays())
+        for(Boundary wall: walls)
         {
-            rootPane.getChildren().add(ray.getLine());
+            pane.getChildren().add(wall.getShape());
         }
 
-        Scene rootScene = new Scene(rootPane);
-        rootScene.setFill(Color.BLACK);
+        for(Ray ray: rays)
+        {
+            pane.getChildren().add(ray.getShape());
+        }
 
-        particle.look(walls);
+        particle.moveTo(WIDTH / 2f, HEIGHT / 2f, walls);
 
-        rootScene.addEventHandler(MouseEvent.MOUSE_MOVED, new EventHandler<MouseEvent>() {
+        Scene scene = new Scene(pane);
+
+        scene.addEventHandler(MouseEvent.MOUSE_MOVED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 particle.moveTo(event.getX(), event.getY(), walls);
             }
         });
 
-        primaryStage.setScene(rootScene);
-        primaryStage.setTitle("Didou raycasting");
-        primaryStage.setWidth(Application.WIDTH);
-        primaryStage.setHeight(Application.HEIGHT);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Raycasting");
         primaryStage.setResizable(false);
+        primaryStage.setWidth(WIDTH);
+        primaryStage.setHeight(HEIGHT);
         primaryStage.show();
     }
 }

@@ -1,37 +1,41 @@
 package app.Raycasting;
 
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 
-public class Boundary
-{
-    private final Line line;
+public class Boundary {
+    private final Line shape;
 
     public Boundary(double startX, double startY, double stopX, double stopY)
     {
-        this.line = new Line(startX, startY, stopX, stopY);
-        this.line.setStroke(Color.WHITE);
+        this.shape = new Line(startX, startY, stopX, stopY) {
+            {
+                setStroke(Color.WHITE);
+            }
+        };
     }
 
-    public Line getLine()
-    {
-        return this.line;
+    public Line getShape() {
+        return shape;
     }
+
     public double getStartX()
     {
-        return this.line.getStartX();
+        return this.shape.getStartX();
     }
+
     public double getStartY()
     {
-        return this.line.getStartY();
+        return this.shape.getStartY();
     }
+
     public double getStopX()
     {
-        return this.line.getEndX();
+        return this.shape.getEndX();
     }
+
     public double getStopY()
     {
-        return this.line.getEndY();
+        return this.shape.getEndY();
     }
 }
